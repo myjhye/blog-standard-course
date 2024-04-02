@@ -3,8 +3,6 @@ import { AppLayout } from "../../components/AppLayout";
 
 export default function NewPost(props) {
 
-    console.log(props);
-
     return (
         <div>
             new post!!
