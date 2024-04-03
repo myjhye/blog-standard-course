@@ -10,6 +10,7 @@ export default function NewPost(props) {
     )
 }
 
+// 공통 레이아웃
 NewPost.getLayout = function getLayout(page, pageProps) {
     return (
         <AppLayout {...pageProps}>
