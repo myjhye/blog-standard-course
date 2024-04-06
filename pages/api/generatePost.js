@@ -97,13 +97,8 @@ export default withApiAuthRequired(async function handler(req, res) {
       created: new Date(),
     });
 
-
     res.status(200).json({ 
-      post: { 
-        postContent, 
-        title, 
-        metaDescription 
-      }, 
+      postId: post.insertedId
     });
 });
 
