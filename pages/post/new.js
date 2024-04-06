@@ -10,7 +10,7 @@ export default function NewPost(props) {
     const [postContent, setPostContent] = useState("");
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(e);
         const response = await fetch(`/api/generatePost`, {
             method: "POST",
             headers: {
@@ -19,7 +19,6 @@ export default function NewPost(props) {
             body: JSON.stringify({ topic, keywords }),
         });
         const json = await response.json();
-        console.log("Result: ", json);
         setPostContent(json.post.postContent);
     };
 
