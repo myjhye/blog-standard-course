@@ -1,3 +1,5 @@
+// 답변 페이지
+
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { AppLayout } from "../../components/AppLayout";
 import clientPromise from '../../lib/mongodb';
@@ -5,6 +7,7 @@ import { ObjectId } from "mongodb";
 import Markdown from "react-markdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHashtag } from "@fortawesome/free-solid-svg-icons";
+import { getAppProps } from "../../utils/getAppProps";
 
 export default function Post(props) {
     
@@ -12,7 +15,7 @@ export default function Post(props) {
         <div className="overflow-auto h-full">
             <div className="max-w-screen-sm mx-auto">
 
-                {/* SEO title and meta description */}
+                {/* SEO 관련 정보 */}
                 <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
                     SEO title and meta description
                 </div>
@@ -21,7 +24,7 @@ export default function Post(props) {
                     <div className="mt-2">{props.metaDescription}</div>
                 </div>
 
-                {/* Keywords */}
+                {/* 키워드 */}
                 <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
                     Keywords
                 </div>
@@ -40,7 +43,7 @@ export default function Post(props) {
                     ))}
                 </div>
 
-                {/* Blog post */}
+                {/* 답변(마크다운 형식) */}
                 <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
                     Blog post
                 </div>
@@ -61,35 +64,50 @@ Post.getLayout = function getLayout(page, pageProps) {
     )
 }
 
+
+// 공통 데이터가 아닌 특정 데이터 가져오기 - 해당 게시물의 내용, 제목, 메타정보 등
 export const getServerSideProps = withPageAuthRequired({
     async getServerSideProps(ctx) {
-        const userSession = await getSession(ctx.req, ctx.res);
-        const client = await clientPromise;
-        const db = client.db('BlogStandard');
-        const user = await db.collection('users').findOne({
+      
+      // 공통 데이터 - 프로필 
+      const props = await getAppProps(ctx);
+      
+      const client = await clientPromise;
+      const db = client.db('BlogStandard');
+      
+      const userSession = await getSession(ctx.req, ctx.res);
+      const user = await db.collection('users').findOne({
         auth0Id: userSession.user.sub,
-        });
-        const post = await db.collection('posts').findOne({
-            _id: new ObjectId(ctx.params.postId),
-            userId: user._id,
-          });
+      });
 
-        if (!post) {
-            return {
-                redirect: {
-                    destination: "/post/new",
-                    permanent: false,
-                }
-            }
-        }
+      // 특정 데이터 - 게시물 내용, 제목, 메타설명, 생성 날짜 등
+      const post = await db.collection('posts').findOne({
+        _id: new ObjectId(ctx.params.postId),
+        userId: user._id,
+      });
+  
 
+      // 게시물 없으면 새 질문 작성 페이지로 이동
+      if (!post) {
         return {
-            props: {
-                postContent: post.postContent,
-                title: post.title,
-                metaDescription: post.metaDescription,
-                keywords: post.keywords,
-            },
+          redirect: {
+            destination: '/post/new',
+            permanent: false,
+          },
         };
-    }
-});
+      }
+  
+      return {
+        props: {
+          id: ctx.params.postId,
+          postContent: post.postContent,
+          title: post.title,
+          metaDescription: post.metaDescription,
+          keywords: post.keywords,
+          postCreated: post.created.toString(),
+          // 공통 데이터
+          ...props,
+        },
+      };
+    },
+  });
