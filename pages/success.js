@@ -1,39 +1,21 @@
-// 토큰 추가 버튼
+// 결제 성공 페이지
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { AppLayout } from "../components/AppLayout";
 import { getAppProps } from "../utils/getAppProps";
 
-export default function TokenTopup() {
-    
-    // 토큰 추가 처리
-    const handleClick = async () => {
-        const result = await fetch(`/api/addTokens`, {
-            method: 'POST',
-        });
-
-        // 응답 json 데이터 파싱 
-        const json = await result.json();
-        // 결제 세션 url로 이동 - 결제 프로세스 진행
-        window.location.href = json.session.url;
-    };
+export default function Success() {
     
     return (
         <div>
-            <h1>token top up!!</h1>
-            <button
-                className="btn"
-                onClick={handleClick}
-            >
-                add token
-            </button>
+            <h1>Thank you for your purchase!</h1>
         </div>
     )
 }
 
 // 공통 레이아웃
 // pageProps에 props 데이터 전달
-TokenTopup.getLayout = function getLayout(page, pageProps) {
+Success.getLayout = function getLayout(page, pageProps) {
     return (
         <AppLayout {...pageProps}>
             {page}
