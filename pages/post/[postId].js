@@ -65,7 +65,7 @@ Post.getLayout = function getLayout(page, pageProps) {
 }
 
 
-// 공통 데이터가 아닌 특정 데이터 가져오기 - 해당 게시물의 내용, 제목, 메타정보 등
+// 공통 데이터와 특정 데이터 가져오기
 export const getServerSideProps = withPageAuthRequired({
     async getServerSideProps(ctx) {
       
