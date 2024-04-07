@@ -1,4 +1,4 @@
-// 토큰 추가 처리
+// 토큰 결제 처리 - 클라이언트 사이드
 
 import { getSession } from "@auth0/nextjs-auth0"
 import stripeInit from "stripe";
@@ -21,11 +21,12 @@ export default async function heandler(req, res) {
     // 요청 헤더에서 호스트 정보 가져오기 - localhost:3000
     const host = req.headers.host;
 
-    // stripe checkout 세션 생성 - 결제 항목, 결제 방식, 성공 시 이동되는 url
+    // 결제 요청 보내고, 결제 성공 시 해당 세션 응답 받기
     const checkoutSession = await stripe.checkout.sessions.create({
         line_items: lineItems,
         mode: "payment",
         success_url: `${protocol}${host}/success`,
+        // 결제 성공 후 결제한 사용자의 아이디(user.sub) 저장
         payment_intent_data: {
             metadata: {
                 sub: user.sub
