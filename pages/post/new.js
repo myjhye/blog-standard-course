@@ -122,8 +122,19 @@ NewPost.getLayout = function getLayout(page, pageProps) {
 export const getServerSideProps = withPageAuthRequired({
     async getServerSideProps(ctx) {
         const props = await getAppProps(ctx);
+
+        // 토큰 없으면 토큰 충전 페이지로 이동
+        if (!props.availableTokens) {
+            return {
+                redirect: {
+                    destination: "/token-topup",
+                    permanent:false,
+                },
+            };
+        }
+
         return {
             props,
-        };
+        }
     },
 });
