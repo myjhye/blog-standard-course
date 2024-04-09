@@ -78,6 +78,7 @@ export default function NewPost(props) {
                                 className="resize-none border border-slate-500 w-full block my-2 px-4 py-2 rounded-sm" 
                                 value={topic}
                                 onChange={(e) => setTopic(e.target.value)}
+                                maxLength={80}
                             />
                         </div>
                         {/* 키워드 입력 */}
@@ -91,6 +92,7 @@ export default function NewPost(props) {
                                 className="resize-none border border-slate-500 w-full block my-2 px-4 py-2 rounded-sm"  
                                 value={keywords}
                                 onChange={(e) => setKeywords(e.target.value)}
+                                maxLength={80}
                             />
                             <small className="block mb-2">
                                 Separate keywords with a comma
@@ -100,6 +102,7 @@ export default function NewPost(props) {
                         <button
                             type="submit" 
                             className="btn"
+                            disabled={!topic.trim() || !keywords.trim() }
                         >
                             generate
                         </button>
