@@ -41,6 +41,8 @@ export default withApiAuthRequired(async function handler(req, res) {
       return;
     };
 
+
+    // 포스트 내용 생성
     const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [
