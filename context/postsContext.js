@@ -33,13 +33,13 @@ export const PostsProvider = ({ children }) => {
     }, []);
 
     //-------- 추가 로딩 게시물 5개(중복X) 게시물 조회
-    const getPosts = useCallback(async ({ lastPostDate }) => {
+    const getPosts = useCallback(async ({ lastPostDate, getNewerPosts = false }) => {
         const result = await fetch(`/api/getPosts`, {
             method: "POST",
             headers: {
                 'content-type': "application/json"
             },
-            body: JSON.stringify({ lastPostDate })
+            body: JSON.stringify({ lastPostDate, getNewerPosts })
         });
 
         // 서버 응답을 json 형식으로 받기

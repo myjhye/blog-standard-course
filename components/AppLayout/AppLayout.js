@@ -13,7 +13,8 @@ export const AppLayout = ({
     children, 
     availableTokens, 
     posts: postsFromSSR, 
-    postId 
+    postId,
+    postCreated 
 }) => {
 
     // 현재 사용자
@@ -29,7 +30,18 @@ export const AppLayout = ({
     //-------- 초반 게시물 5개 조회(서버사이드에서 가져오기)
     useEffect(() => {
         setPostsFromSSR(postsFromSSR);
-    }, [postsFromSSR, setPostsFromSSR]);
+
+        if (postId) {
+            const exists = postsFromSSR.find((post) => post._id === postId);
+            if (!exists) {
+                getPosts({ 
+                    getNewerPosts: true,
+                    lastPostDate: postCreated,  
+                })
+            }
+        }
+
+    }, [postsFromSSR, setPostsFromSSR, postId, postCreated, getPosts]);
 
     return (
         <div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">

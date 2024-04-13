@@ -13,7 +13,7 @@ export default withApiAuthRequired(async function handler(req, res) {
             auth0Id: sub
         });
 
-        const { lastPostDate } = req.body;
+        const { lastPostDate, getNewerPosts } = req.body;
 
         // posts 컬렉션에서 이전 게시물 찾기
         // 현재 사용자가 업로드한, 요청된 마지막 날짜보다 이전인 것
@@ -21,10 +21,10 @@ export default withApiAuthRequired(async function handler(req, res) {
             .collection("posts")
             .find({
                 userId: userProfile._id,
-                created: {$lt: new Date(lastPostDate)},
+                created: {[getNewerPosts ? "$gt" : "$lt"]: new Date(lastPostDate)},
             })
             // 최대 5개 게시물
-            .limit(5)
+            .limit(getNewerPosts ? 0 : 5)
             // 생성날짜에서 내림차순 정렬
             .sort({ created: -1 })
             .toArray();
