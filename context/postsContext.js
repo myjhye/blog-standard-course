@@ -14,6 +14,18 @@ export const PostsProvider = ({ children }) => {
     // 로드할 게시물 없음
     const [noMorePosts, setNoMorePosts] = useState(false);
 
+    const deletePost = useCallback((postId) => {
+        setPosts(value => {
+            const newPosts = [];
+            value.forEach((post) => {
+                if(post._id !== postId) {
+                    newPosts.push(post);
+                }
+            });
+            return newPosts;
+        });
+    }, []);
+
 
     //-------- 초반 게시물 5개 조회(서버사이드 처리)
     const setPostsFromSSR = useCallback((postsFromSSR = []) => {
@@ -69,7 +81,7 @@ export const PostsProvider = ({ children }) => {
     }, []);
 
     return (
-        <PostContext.Provider value={{posts, setPostsFromSSR, getPosts, noMorePosts }}>
+        <PostContext.Provider value={{posts, setPostsFromSSR, getPosts, noMorePosts, deletePost }}>
             {children}
         </PostContext.Provider>
     )
