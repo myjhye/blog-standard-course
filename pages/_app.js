@@ -5,6 +5,7 @@ import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { DM_Sans, DM_Serif_Display } from '@next/font/google';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
+import { PostsProvider } from '../context/postsContext';
 
 config.autoAddCss = false;
 
@@ -27,9 +28,12 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <UserProvider>
-      <main className={`${dmSans.variable} ${dmSerifDisplay.variable} font-body`}>
-        {getLayout(<Component {...pageProps} />, pageProps)}
-      </main>
+      {/* PostsProvider: 모든 페이지에서 포스트 데이터 접근 */}
+      <PostsProvider>
+        <main className={`${dmSans.variable} ${dmSerifDisplay.variable} font-body`}>
+          {getLayout(<Component {...pageProps} />, pageProps)}
+        </main>
+      </PostsProvider>
     </UserProvider>
   )
 }

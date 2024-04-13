@@ -1,4 +1,4 @@
-// 페이지에 공통 적용하는 사이드바 레이아웃
+// 사이드바 (여러 페이지에 공통 적용)
 
 import Link from "next/link";
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -6,11 +6,30 @@ import Image from "next/image";
 import { Logo } from '../Logo';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
+import { useContext, useEffect } from "react";
+import PostsContext from '../../context/postsContext';
 
-export const AppLayout = ({ children, availableTokens, posts, postId }) => {
+export const AppLayout = ({ 
+    children, 
+    availableTokens, 
+    posts: postsFromSSR, 
+    postId 
+}) => {
 
     // 현재 사용자
     const { user } = useUser();
+
+    const { 
+        setPostsFromSSR, 
+        posts,
+        getPosts,
+        noMorePosts, 
+    } = useContext(PostsContext);
+
+    //-------- 초반 게시물 5개 조회(서버사이드에서 가져오기)
+    useEffect(() => {
+        setPostsFromSSR(postsFromSSR);
+    }, [postsFromSSR, setPostsFromSSR]);
 
     return (
         <div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">
@@ -30,6 +49,7 @@ export const AppLayout = ({ children, availableTokens, posts, postId }) => {
                 </div>
                 {/* 게시물 목록 */}
                 <div className="flex-1 overflow-auto bg-gradient-to-b from-slate-800 to-cyan-800">
+                    {/* 초반 게시물 5개 */}
                     {posts.map((post) => (
                         <Link 
                             key={post._id}
@@ -41,6 +61,19 @@ export const AppLayout = ({ children, availableTokens, posts, postId }) => {
                             {post.topic}
                         </Link>
                     ))}
+                    {/* 더 보기 버튼 - 추가 게시물 5개 */}
+                    {!noMorePosts && (
+                        <div
+                            onClick={() => { 
+                                getPosts({ 
+                                    lastPostDate: posts[posts.length - 1].created 
+                                }); 
+                            }} 
+                            className="hover:underline text-sm text-slate-400 text-center cursor-pointer mt-4"
+                        >
+                            Load more posts
+                        </div>
+                    )}
                 </div>
                 {/* 사용자 프로필, 로그인/로그아웃 */}
                 <div className="bg-cyan-800 flex items-center gap-2 border-t border-t-black/50 h-20 px-2">
